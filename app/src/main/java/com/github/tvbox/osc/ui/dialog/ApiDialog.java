@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.server.ControlManager;
+import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.adapter.ApiHistoryDialogAdapter;
 import com.github.tvbox.osc.ui.tv.QRCodeGen;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -37,9 +38,9 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
  * @since 2020/12/27
  */
 public class ApiDialog extends BaseDialog {
-    private ImageView ivQRCode;
-    private TextView tvAddress;
-    private EditText inputApi;
+    private final ImageView ivQRCode;
+    private final TextView tvAddress;
+    private final EditText inputApi;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent event) {
@@ -55,17 +56,23 @@ public class ApiDialog extends BaseDialog {
         ivQRCode = findViewById(R.id.ivQRCode);
         tvAddress = findViewById(R.id.tvAddress);
         inputApi = findViewById(R.id.input);
-        inputApi.setText(Hawk.get(HawkConfig.API_URL, ""));
+        inputApi.setText(Hawk.get(HawkConfig.API_URL, "https://clanTV.github.io/clanTV/clanTV"));
         findViewById(R.id.inputSubmit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String newApi = inputApi.getText().toString().trim();
-                if (!newApi.isEmpty() && (newApi.startsWith("http") || newApi.startsWith("clan"))) {
+                // takagen99: Convert all to clan://localhost format
+                if (newApi.startsWith("file://")) {
+                    newApi = newApi.replace("file://", "clan://localhost/");
+                } else if (newApi.startsWith("./")) {
+                    newApi = newApi.replace("./", "clan://localhost/");
+                }
+                if (!newApi.isEmpty()) {
                     ArrayList<String> history = Hawk.get(HawkConfig.API_HISTORY, new ArrayList<String>());
                     if (!history.contains(newApi))
                         history.add(0, newApi);
-                    if (history.size() > 10)
-                        history.remove(10);
+                    if (history.size() > 20)
+                        history.remove(20);
                     Hawk.put(HawkConfig.API_HISTORY, history);
                     listener.onchange(newApi);
                     dismiss();
@@ -83,7 +90,7 @@ public class ApiDialog extends BaseDialog {
                 if (history.contains(current))
                     idx = history.indexOf(current);
                 ApiHistoryDialog dialog = new ApiHistoryDialog(getContext());
-                dialog.setTip("历史配置列表");
+                dialog.setTip(HomeActivity.getRes().getString(R.string.dia_history_list));
                 dialog.setAdapter(new ApiHistoryDialogAdapter.SelectDialogInterface() {
                     @Override
                     public void click(String value) {
