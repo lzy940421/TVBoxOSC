@@ -1,8 +1,8 @@
-name: Test
+name: Test-lzy940421
 
 on:
-  schedule:
-    - cron: 59 */8 * * *
+#  schedule:
+#    - cron: 59 */8 * * *
   workflow_dispatch:
     inputs:
       rebuild:
@@ -21,10 +21,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - userName: q215613905
+          - userName: lzy940421
             repoName: TVBoxOS
             branchName: main
-          - userName: takagen99
+          - userName: lzy940421
             repoName: Box
             branchName: main
             java_ver: 17
@@ -54,7 +54,7 @@ jobs:
         working-directory: TVBoxOSC
         run: |
           echo '修改VersionName'
-          if [ "${{ matrix.userName }}" == "takagen99" ]; then
+          if [ "${{ matrix.userName }}" == "lzy940421" ]; then
             # 进行 sed 修改
             sed -i 's/\.concat(buildTime())/ +\"${{ env.tag }}\"/g' app/build.gradle 
             # 目前关于页面没有合并我的分支
@@ -77,14 +77,14 @@ jobs:
           tar -cJf sourceCode-${{ env.commitS }}.tar.xz --exclude=.git --exclude=.github *
       
       - name: Setup Python
-        #if: ${{ matrix.userName == 'q215613905' && env.commit }}
+        #if: ${{ matrix.userName == 'lzy940421' && env.commit }}
         if: ${{ env.commit }}
         uses: actions/setup-python@v6
         with:
           python-version: '3.8'
 
       - name: Install Python dependencies
-        #if: ${{ matrix.userName == 'q215613905' && env.commit }}
+        #if: ${{ matrix.userName == 'lzy940421' && env.commit }}
         if: ${{ env.commit }}
         run: |
           python -m pip install --upgrade pip
@@ -99,7 +99,7 @@ jobs:
           sed -i '/buildPython.*python.exe/d' pyramid/build.gradle
 
       - name: Setup Python local.properties
-        #if: ${{ matrix.userName == 'q215613905' && env.commit }}
+        #if: ${{ matrix.userName == 'lzy940421' && env.commit }}
         if: ${{ env.commit }}
         working-directory: TVBoxOSC
         run: echo "" > local.properties 
