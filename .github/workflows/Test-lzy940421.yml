@@ -25,7 +25,7 @@ jobs:
             repoName: TVBoxOS
             branchName: main
           - userName: lzy940421
-            repoName: Box
+            repoName: Box-takagen99
             branchName: main
             java_ver: 17
     steps:
