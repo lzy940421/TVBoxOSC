@@ -22,10 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - userName: q215613905
+          - userName: lzy940421
             repoName: TVBoxOS
             branchName: main
-          - userName: takagen99
+          - userName: lzy940421
             repoName: Box
             branchName: main
             java_ver: 17
